@@ -18,8 +18,8 @@ When turned on, it does the following conversions:
   - enlarge font size
   - switch to variable width font
   - enable word wrap (without fringe marker)
-  - increate line spacing
-  - adds a window margin to the left and right (thereby centering the text)
+  - increase line spacing
+  - add a window margin to the left and right (thereby centering the text)
   - disable all input keys (rendering the buffer read-only)
   - disable the cursor
   - switch to buffer-scrolling (like e.g. in Acroread)
@@ -28,19 +28,19 @@ When turned on, it does the following conversions:
 
 Novel mode provides the following one-key commands, when active:
 
-   n           scroll one page down
-   p           scroll one page up
-   <down>      scroll one line down
-   <up>        scroll one line up
-   mousewheel  scroll linewise up or down
-   SPC         scroll one page down
-   <left>      increase margins, makes visible text narrower
-   <right>     decrease margins, makes visible text wider
-   +           increase font size
-   -           decrease font size
-   i           invert video display
-   q           quit novel mode
-   ?           display key mapping
+    n           scroll one page down
+    p           scroll one page up
+    <down>      scroll one line down
+    <up>        scroll one line up
+    mousewheel  scroll linewise up or down
+    SPC         scroll one page down
+    <left>      increase margins, makes visible text narrower
+    <right>     decrease margins, makes visible text wider
+    +           increase font size
+    -           decrease font size
+    i           invert video display
+    q           quit novel mode
+    ?           display key mapping
 
 Important: while normal  key input (beside the  ones listed above),
 is disabled, Control and Meta still work, of course. Please be also
