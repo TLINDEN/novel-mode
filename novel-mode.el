@@ -91,12 +91,12 @@
 
 ;; Add something like this to your config:
 
-;;    (require 'novel-mode)
-;;    (add-hook 'text-mode-hook 'novel-mode)
+;;     (require 'novel-mode)
+;;     (add-hook 'text-mode-hook 'novel-mode)
 
 ;; or load it manually, when needed:
 
-;;    M-x novel-mode
+;;     M-x novel-mode
 
 ;;; Customize:
 
@@ -121,12 +121,12 @@
 
 ;; Example:
 
-;;    (add-hook 'novel-mode-post-start-hook
-;;              (lambda ()
-;;                (set-face-font 'default "DejaVu Sans")))
-;;    (add-hook 'novel-mode-post-stop-hook
-;;              (lambda ()
-;;                (set-face-font 'default "Courier")))
+;;     (add-hook 'novel-mode-post-start-hook
+;;               (lambda ()
+;;                 (set-face-font 'default "DejaVu Sans")))
+;;     (add-hook 'novel-mode-post-stop-hook
+;;               (lambda ()
+;;                 (set-face-font 'default "Courier")))
 
 
 
