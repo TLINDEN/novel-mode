@@ -71,12 +71,12 @@ To use, save novel-mode.el to a directory in your load-path.
 
 Add something like this to your config:
 
-   (require 'novel-mode)
-   (add-hook 'text-mode-hook 'novel-mode)
+    (require 'novel-mode)
+    (add-hook 'text-mode-hook 'novel-mode)
 
 or load it manually, when needed:
 
-   M-x novel-mode
+    M-x novel-mode
 
 # Customize
 
@@ -101,12 +101,12 @@ its behavior.  The following hooks are available:
 
 Example:
 
-   (add-hook 'novel-mode-post-start-hook
-             (lambda ()
-               (set-face-font 'default "DejaVu Sans")))
-   (add-hook 'novel-mode-post-stop-hook
-             (lambda ()
-               (set-face-font 'default "Courier")))
+    (add-hook 'novel-mode-post-start-hook
+              (lambda ()
+                (set-face-font 'default "DejaVu Sans")))
+    (add-hook 'novel-mode-post-stop-hook
+              (lambda ()
+                (set-face-font 'default "Courier")))
 
 # Meta
 
@@ -130,8 +130,8 @@ along  with  this program;  if  not,  write  to the  Free  Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 USA
 
-Version: 0.01
-Author: T.v.Dein <tlinden@cpan.org>
-Keywords: read books novels
-URL: https://github.com/tlinden/novel-mode
-License: GNU General Public License >= 2
+    - Version: 0.01
+    - Author: T.v.Dein <tlinden@cpan.org>
+    - Keywords: read books novels
+    - URL: https://github.com/tlinden/novel-mode
+    - License: GNU General Public License >= 2
