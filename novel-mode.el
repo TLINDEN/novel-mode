@@ -143,12 +143,13 @@
   :link '(url-link :tag "Repository" "https://github.com/tlinden/novel-mode"))
 
 ;; various vars to remember previous states
-(defconst novel--mlf mode-line-format)
-(defconst novel--vlm visual-line-mode)
-(defconst novel--ww  word-wrap)
-(defconst novel--mbm menu-bar-mode)
-(defconst novel--tbm tool-bar-mode)
-(defconst novel--sbm scroll-bar-mode)
+(defvar novel--mlf nil)
+(defvar novel--vlm nil)
+(defvar novel--ww  nil)
+(defvar novel--mbm nil)
+(defvar novel--tbm nil)
+(defvar novel--sbm nil)
+(defvar novel--ct nil)
 
 ;; set on startup
 (defvar novel--max-margin nil)
@@ -215,6 +216,18 @@ COMMANDS is a list of alternating OLDDEF NEWDEF command names."
       (if (fboundp 'command-remapping)
           (novel--defkey map (vector 'remap old) new)
         (substitute-key-definition old new map global-map)))))
+
+(defun novel--backup-states()
+  "Store current states in variables for later restoration"
+  ;; various vars to remember previous states
+  (setq novel--mlf mode-line-format
+        novel--vlm visual-line-mode
+        novel--ww  word-wrap
+        novel--mbm menu-bar-mode
+        novel--tbm tool-bar-mode
+        novel--ct  cursor-type
+        novel--sbm scroll-bar-mode))
+
 
 ;;;; Hooks:
 
@@ -300,6 +313,7 @@ COMMANDS is a list of alternating OLDDEF NEWDEF command names."
   (if (null (get this-command 'state-on-p))
       ;; enable, primary novel mode setup
       (progn
+        (novel--backup-states)
         (run-hooks 'novel-mode-pre-start-hook)
         
         (setq novel--max-margin (/ (- (window-body-width) 40) 2))
@@ -340,25 +354,21 @@ COMMANDS is a list of alternating OLDDEF NEWDEF command names."
       (setq scroll-step            0
             scroll-conservatively  0
             line-spacing           nil
-            cursor-type            'box            
+            cursor-type            novel--ct
             mode-line-format       novel--mlf
             visual-line-mode       novel--vlm
             word-wrap              novel--ww
-            )
-      
+            menu-bar-mode          novel--mbm
+            tool-bar-mode          novel--tbm
+            scroll-bar-mode        novel--sbm)
+
+      (set-fringe-mode        1)
       (set-window-margins nil 0 0)
       (variable-pitch-mode 0)
       (text-scale-increase -2)
-      
       (put this-command 'state-on-p nil)
-      
-      (menu-bar-mode          novel--mbm)
-      (tool-bar-mode          novel--tbm)
-      (scroll-bar-mode        novel--sbm)
-      (set-fringe-mode 1)
-      
       (novel--reset-remap-self-insert)
-      
+
       (if (not novel--invert-state)
           (novel-invert))
 
