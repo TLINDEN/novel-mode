@@ -108,10 +108,17 @@ Example:
               (lambda ()
                 (set-face-font 'default "Courier")))
 
+# TODO
+
+- add a possibility to save current settings for later reading sessions
+- fix fill mode in displayed text, if possible (currently newlines are disturbing the reading experience)
+- [DONE] replace help in echo area with transient
+- do not double font size on startup
+
 # Meta
 
 
-Copyright (C) 2016, T.v.Dein <tlinden@cpan.org>
+Copyright (C) 2016-2023, T.v.Dein <tlinden@cpan.org>
 
 This file is NOT part of Emacs.
 

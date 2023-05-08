@@ -1,6 +1,6 @@
 ;;; novel-mode.el --- screen reader
 
-;; Copyright (C) 2016, T.v.Dein <tlinden@cpan.org>
+;; Copyright (C) 2016-2023, T.v.Dein <tlinden@cpan.org>
 
 ;; This file is NOT part of Emacs.
 
@@ -19,7 +19,7 @@
 ;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 ;; USA
 
-;; Version: 0.01
+;; Version: 0.02
 ;; Author: T.v.Dein <tlinden@cpan.org>
 ;; Keywords: read books novels
 ;; URL: https://github.com/tlinden/novel-mode
@@ -132,9 +132,12 @@
 
 
 ;;; Code:
+(eval-when-compile
+  (require 'transient))
+
 ;;;; Constants:
 
-(defconst novel-mode-versioni "0.01" "Novel mode version")
+(defconst novel-mode-version "0.02" "Novel mode version")
 
 (defgroup novel-mode nil
   "screen reader mode"
@@ -143,19 +146,19 @@
   :link '(url-link :tag "Repository" "https://github.com/tlinden/novel-mode"))
 
 ;; various vars to remember previous states
-(defvar novel--mlf nil)
-(defvar novel--vlm nil)
-(defvar novel--ww  nil)
-(defvar novel--mbm nil)
-(defvar novel--tbm nil)
-(defvar novel--sbm nil)
-(defvar novel--ct nil)
+(defvar novel--modelineformat nil)
+(defvar novel--visuallinemode nil)
+(defvar novel--wordwrap  nil)
+(defvar novel--menubar nil)
+(defvar novel--toolbar nil)
+(defvar novel--scrollbar nil)
+(defvar novel--cursortype nil)
 
 ;; set on startup
 (defvar novel--max-margin nil)
 (defvar novel--cur-margin nil)
 
-;; remember last invertion state, if any. we start with t by purpose, keep this
+;; remember last inversion state, if any. we start with t by purpose, keep this
 (defvar novel--invert-state t)
 
 
@@ -220,14 +223,23 @@ COMMANDS is a list of alternating OLDDEF NEWDEF command names."
 (defun novel--backup-states()
   "Store current states in variables for later restoration"
   ;; various vars to remember previous states
-  (setq novel--mlf mode-line-format
-        novel--vlm visual-line-mode
-        novel--ww  word-wrap
-        novel--mbm menu-bar-mode
-        novel--tbm tool-bar-mode
-        novel--ct  cursor-type
-        novel--sbm scroll-bar-mode))
+  (setq novel--modelineformat mode-line-format
+        novel--visuallinemode visual-line-mode
+        novel--wordwrap word-wrap
+        novel--menubar menu-bar-mode
+        novel--toolbar tool-bar-mode
+        novel--cursortype cursor-type
+        novel--scrollbar scroll-bar-mode))
 
+(defun novel--restore-states()
+  "Restore old states of various system settings"
+  (setq cursor-type            novel--cursortype
+        mode-line-format       novel--modelineformat
+        visual-line-mode       novel--visuallinemode
+        word-wrap              novel--wordwrap
+        menu-bar-mode          novel--menubar
+        tool-bar-mode          novel--toolbar
+        scroll-bar-mode        novel--scrollbar))
 
 ;;;; Hooks:
 
@@ -315,68 +327,109 @@ COMMANDS is a list of alternating OLDDEF NEWDEF command names."
       (progn
         (novel--backup-states)
         (run-hooks 'novel-mode-pre-start-hook)
-        
+
         (setq novel--max-margin (/ (- (window-body-width) 40) 2))
         (if (not novel-default-margin)
             (setq novel-default-margin (/ (- (window-body-width) fill-column) 3)))
         (setq novel--cur-margin novel-default-margin)
-        
+
         (setq scroll-step            1       ; scroll linewise
               scroll-conservatively  10000
-              cursor-type            nil     ; no cursor 
+              cursor-type            nil     ; no cursor
               line-spacing           3       ; more distance between lines
               mode-line-format       nil     ; no modeline
               visual-line-mode       t       ; no wrap marker on fringe
               word-wrap              t
               )
-        
+
         (delete-other-windows)               ; There can be only one, McLeod.
         (novel--set-margins)
-        
+
         (variable-pitch-mode 1)              ; enable variable width font
         (text-scale-increase 2)              ; larger font size
         (put this-command 'state-on-p t)     ; remeber current state
-        
+
         (menu-bar-mode          -1)          ; disable widgets
         (tool-bar-mode          -1)
         (scroll-bar-mode        0)
         (set-fringe-mode        0)           ; no fringe
-        
+
         (novel--remap-self-insert)           ; disable all keys but ours
 
-        (run-hooks 'novel-mode-post-start-hook)
-        )
-    
+        (run-hooks 'novel-mode-post-start-hook))
+
     ;; disable, restore everything back to normal
     (progn
       (run-hooks 'novel-mode-pre-stop-hook)
-      
+
       (setq scroll-step            0
             scroll-conservatively  0
-            line-spacing           nil
-            cursor-type            novel--ct
-            mode-line-format       novel--mlf
-            visual-line-mode       novel--vlm
-            word-wrap              novel--ww
-            menu-bar-mode          novel--mbm
-            tool-bar-mode          novel--tbm
-            scroll-bar-mode        novel--sbm)
+            line-spacing           nil)
+
+      (novel--restore-states)
 
       (set-fringe-mode        1)
       (set-window-margins nil 0 0)
       (variable-pitch-mode 0)
-      (text-scale-increase -2)
+      (text-scale-increase 0)
       (put this-command 'state-on-p nil)
       (novel--reset-remap-self-insert)
 
       (if (not novel--invert-state)
           (novel-invert))
 
-      (run-hooks 'novel-mode-post-stop-hook)
-      ))
+      (run-hooks 'novel-mode-post-stop-hook)))
   (redraw-frame (selected-frame)))
 
-(defun novel-help()
+(transient-define-suffix novel--suffix-incr-margins ()
+  :transient t
+  (interactive)
+  (novel-incr-margins))
+
+(transient-define-suffix novel--suffix-decr-margins ()
+  :transient t
+  (interactive)
+  (novel-decr-margins))
+
+(transient-define-suffix novel--suffix-incr-font ()
+  :transient t
+  (interactive)
+  (novel-incr-font-size))
+
+(transient-define-suffix novel--suffix-decr-font ()
+  :transient t
+  (interactive)
+  (novel-decr-font-size))
+
+(transient-define-suffix novel--suffix-invert ()
+  (interactive)
+  (novel-invert))
+
+(transient-define-prefix novel-help()
+  "Interactive help for novel mode"
+  [:class transient-columns
+          ["Navigating"
+           :pad-keys t
+           ("n" "scroll one page down" novel-page-down)
+           ("p" "scroll one page up" novel-page-up)
+           ("<down>" "scroll one line down" novel-down)
+           ("<up>" "scroll one line up" novel-up)
+           ("SPC" "scroll one page down" novel-page-down)]
+
+          ["Settings"
+           :pad-keys t
+           ("<left>" "increase left and right margins" novel--suffix-incr-margins)
+           ("<right>" "decrease left and right margins" novel--suffix-decr-margins)
+           ("+" "increase font size" novel--suffix-incr-font)
+           ("-" "decrease font size" novel--suffix-decr-font)
+           ("i" "invert video display" novel--suffix-invert)]
+
+          ["Novel Mode"
+           :pad-keys t
+           ("C-g" "close help buffer" transient-quit-one)
+           ("q" "quit novel mode" novel-mode)]])
+
+(defun novel--old-help()
   "Display help"
   (interactive)
   (message "Available commands in novel mode:
@@ -424,8 +477,7 @@ COMMANDS is a list of alternating OLDDEF NEWDEF command names."
             (define-key map (kbd "h")         'novel-help)
             (define-key map (kbd "?")         'novel-help)
             map)
-  (novel-toggle)
-  )
+  (novel-toggle))
 
 
 (provide 'novel-mode)
