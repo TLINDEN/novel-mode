@@ -1,4 +1,8 @@
+> [!CAUTION]
+> This software is now being maintained on [Codeberg](https://codeberg.org/scip/novel-mode/).
+
 # novel-mode
+
 Emacs Screen Reader
 
 # Demo
