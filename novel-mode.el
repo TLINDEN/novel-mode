@@ -22,7 +22,7 @@
 ;; Version: 0.01
 ;; Author: T.v.Dein <tlinden@cpan.org>
 ;; Keywords: read books novels
-;; URL: https://github.com/tlinden/novel-mode
+;; URL: https://codeberg.org/scip/novel-mode
 ;; License: GNU General Public License >= 2
 
 ;;; Commentary:
@@ -140,7 +140,7 @@
   "screen reader mode"
   :group 'extensions
   :group 'tools
-  :link '(url-link :tag "Repository" "https://github.com/tlinden/novel-mode"))
+  :link '(url-link :tag "Repository" "https://codeberg.org/scip/novel-mode"))
 
 ;; various vars to remember previous states
 (defvar novel--mlf nil)

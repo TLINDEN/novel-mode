@@ -3,7 +3,7 @@ Emacs Screen Reader
 
 # Demo
 
-![demo](https://raw.githubusercontent.com/TLINDEN/novel-mode/master/demo.gif)
+![demo](demo.gif)
 
 # Introduction
 
@@ -133,5 +133,5 @@ USA
     - Version: 0.01
     - Author: T.v.Dein <tlinden@cpan.org>
     - Keywords: read books novels
-    - URL: https://github.com/tlinden/novel-mode
+    - URL: https://codeberg.org/scip/novel-mode
     - License: GNU General Public License >= 2
